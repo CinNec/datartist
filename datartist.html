@@ -1,0 +1,59 @@
+<html>
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <style type="text/css">
+
+    </style>
+</head>
+<script  type="text/javascript">
+    function querydbp(){
+        var url = "http://dbpedia.org/sparql";
+        var name = document.getElementById("name").value;
+
+        var query1 = [
+                "SELECT * FROM <http://dbpedia.org> WHERE{?p  <http://xmlns.com/foaf/0.1/name> \"",name,"\"@en. ?p <http://dbpedia.org/ontology/birthPlace> ?a}"
+        ].join("");
+
+        var queryUrl = encodeURI( url+"?query="+query1 + "&format=json" );
+
+        $.get( queryUrl, function( data ) {
+            processData(data);
+        });
+
+        function processData (data) {
+            if (typeof data === 'object') {
+                var items = data.results.bindings;
+                for (var i in items) {
+                    if (items.hasOwnProperty(i)) {
+                        var p = $('<p/>', {
+                            text : items[i].p.value
+                        });
+                        var d = $('<p/>', {
+                            text : items[i].a.value
+                        });
+
+                        $('.demo-container').append(p);
+                        $('.demo-container').append(d);
+                    }
+                }
+            }
+        }
+    }
+</script>
+<body>
+<form name ="input">
+    Name: <input type="text" ID="name">
+    <button type="button" onclick="return querydbp();">submit </button>
+</form>
+
+<hr/>
+
+<div class="demo-container">
+    <div class="demo-box">Results</div>
+</div>
+
+
+
+</body>
+
+</html>
